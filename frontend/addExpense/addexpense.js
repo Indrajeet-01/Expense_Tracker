@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.log(response.data);
                 alert('Expense added successfully');
                 // You can redirect the user to another page if needed
-                // window.location.href = '/displayExpenses.html';
+                window.location.href = '../displayExpense/getexpenses.html';
             })
             .catch(error => {
                 console.error('Error:', error);
