@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 
 export const authMiddleware = (req, res, next) => {
     // Get the token from the request headers, query parameters, or cookies
-    const token = req.cookies.access_token
+    const token = req.cookies.access_token || req.headers.authorization
 
     // Check if the token exists
     if (!token) {

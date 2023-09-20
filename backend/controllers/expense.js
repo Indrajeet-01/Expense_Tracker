@@ -29,3 +29,19 @@ export const addExpense = (req, res) => {
         res.status(201).json(newExpense);
     });
 };
+
+// get all expenses
+export const getExpense = (req, res) => {
+    const userId = req.user.id; // Assuming you've set user information in the request object
+
+    
+    const q = "SELECT * FROM addexpense WHERE user_id = ?";
+
+    db.query(q, [userId], (err, expenses) => {
+        if (err) {
+            return res.status(500).json({ error: 'Internal Server Error' });
+        }
+
+        res.status(200).json(expenses);
+    });
+};
