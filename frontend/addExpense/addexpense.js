@@ -1,14 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     const expenseForm = document.getElementById('expenseForm');
 
-    function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(';').shift();
-    }
-    
-
-    const token = getCookie("access_token")
+    const token = localStorage.getItem("access_token")
     
 
     expenseForm.addEventListener('submit', function (e) {
@@ -23,16 +16,18 @@ document.addEventListener('DOMContentLoaded', function () {
         const expenseData = {
             amountSpent,
             expenseDescription,
-            expenseCategory
+            expenseCategory,
         };
+        console.log(expenseData)
 
         // Send a POST request to your backend API to add the expense using Axios
-        axios.post('http://localhost:8800/expense/addExpense', expenseData,
+        axios.post('http://localhost:8800/expense/addExpense',expenseData,
         {
             headers: {
-                'Authorization': `Bearer ${token}`, // Replace 'token' with the actual JWT token
+                'Authorization': `Bearer ${token}`, // Include the JWT token in the "Authorization" header
                 'Content-Type': 'application/json',
-            }}
+            },
+        }    
         )
             .then(response => {
                 // Handle the response from the backend (e.g., display a success message)

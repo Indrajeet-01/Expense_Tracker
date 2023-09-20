@@ -14,7 +14,11 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             const response = await axios.post("http://localhost:8800/user/login", userData);
 
+            localStorage.setItem("access_token",response.data.access_token)
+
             if (response.status === 200) {
+                console.log(response.data)
+                localStorage.setItem("access_token",response.data.access_token)
                 message.textContent = "Login successful!";
                 message.className = "success";
                 // Redirect to a different page or perform further actions here

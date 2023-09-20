@@ -4,7 +4,7 @@ import {authMiddleware} from '../middleware/auth.js'
 
 const router = express.Router()
 
-router.post('/addExpense', authMiddleware, addExpense)
+router.post('/addExpense',authMiddleware, addExpense)
 router.get('/displayExpenses', authMiddleware,getExpense)
 
 
