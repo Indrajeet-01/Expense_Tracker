@@ -5,6 +5,7 @@ import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import userRoutes from './routes/user.js'
 import expenseRoutes from './routes/expense.js'
+import razorPayment from './routes/razorpay.js'
 
 const app = express()
 
@@ -16,6 +17,7 @@ app.use(cookieParser())
 
 app.use('/user',userRoutes)
 app.use('/expense',expenseRoutes)
+app.use('/payment',razorPayment)
 
 
 db.connect((err) => {

@@ -21,6 +21,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 localStorage.setItem("access_token",response.data.access_token)
                 message.textContent = "Login successful!";
                 message.className = "success";
+                setTimeout(() => {
+                    window.location.href = "../home/home.html";
+                }, 2000);
                 // Redirect to a different page or perform further actions here
             } else {
                 message.textContent = response.data || "Login failed.";
