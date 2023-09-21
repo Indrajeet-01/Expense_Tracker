@@ -1,12 +1,15 @@
 
 const razorpayKey = 'rzp_test_i99EOMZqK9w3qF';
 
+
 document.getElementById('payment-form').addEventListener('submit', function (e) {
     e.preventDefault();
 
     const amount = document.getElementById('amount').value;
     const name = document.getElementById('name').value;
     const email = document.getElementById('email').value;
+
+    const token = localStorage.getItem("access_token")
 
     const options = {
         key: razorpayKey,
@@ -18,7 +21,14 @@ document.getElementById('payment-form').addEventListener('submit', function (e) 
     };
 
     axios
-        .post('http://localhost:8800/payment/createOrder', options) // Send a POST request to your server to create an order
+        .post('http://localhost:8800/payment/createOrder', options,
+        {
+            headers: {
+                'Authorization': `Bearer ${token}`, // Include the JWT token in the "Authorization" header
+                'Content-Type': 'application/json',
+            },
+        }    
+        ) // Send a POST request to your server to create an order
         .then(function (response) {
             const orderData = response.data;
 
@@ -26,7 +36,14 @@ document.getElementById('payment-form').addEventListener('submit', function (e) 
             rzp.on('payment.success', function (response) {
                 // Handle the payment success and send data to your server
                 axios
-                    .post('http://localhost:8800/payment/paymentSuccess', response) // Send payment success data to your server
+                    .post('http://localhost:8800/payment/paymentSuccess', response,
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token}`, // Include the JWT token in the "Authorization" header
+                            'Content-Type': 'application/json',
+                        },
+                    }    
+                    ) // Send payment success data to your server
                     .then(function (result) {
                         console.log(result.data);
                         // Redirect or show a success message to the user

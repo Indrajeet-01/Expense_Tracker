@@ -5,6 +5,6 @@ import { authMiddleware } from '../middleware/auth.js'
 const router = express.Router()
 
 router.post('/createOrder',authMiddleware, createOrder)
-router.post('/paymentSuccess', paymentStatus)
+router.post('/paymentSuccess',authMiddleware, paymentStatus)
 
 export default router

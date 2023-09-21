@@ -1,4 +1,5 @@
 import Razorpay from 'razorpay'
+import { db } from "../db.js";
 
 const razorpay = new Razorpay({
     key_id: "rzp_test_i99EOMZqK9w3qF",
@@ -24,7 +25,7 @@ export const createOrder = async (req,res) => {
 }
 
 // check status of payment
-export const paymentStatus = (req,res) => {
+export const paymentStatus = async (req,res) => {
     const { payment_id, order_id, signature } = req.body;
 
     const isValidSignature = razorpay.webhooks.verifyPaymentSignature(
@@ -33,6 +34,16 @@ export const paymentStatus = (req,res) => {
     );
 
     if (isValidSignature) {
+        const userId = req.user.id;
+        const q = "UPDATE users SET ispremium = ? WHERE id = ? "
+
+        db.query(q,['1',userId], (err,result) => {
+            if (err) {
+                return res.status(500).json({ error: 'ispremium is not updated' });
+            }
+    
+            res.status(200).json("updated successfully");
+        })
     
     // You can update your database or perform other actions here
         res.status(200).send("Payment successful");
