@@ -15,9 +15,10 @@
             <ul>
                 <li><a href="#home">Home</a></li>
                 <li><a href="../displayExpense/getexpenses.html">Expenses</a></li>
-                <li><a href="#income">Income</a></li>
-                <li><a href="#reports">Reports</a></li>
-                <li><a href="#premium"><i class="fas fa-crown"></i> Premium</a></li>
+                <li id="leaderboard-link"><a href="../leaderBoard/leaderBoard.html">Leader Board</a></li>
+                <li><a href="#report">Reports</a></li>
+                <li><a href="../payment/payment.html"><i class="fas fa-crown premium-icon"></i> Premium</a></li>
+                <li><button id="logout-button">Logout</button></li>
             </ul>
         </nav>
     </header>
@@ -43,5 +44,52 @@
     <footer>
         <p>&copy; 2023 Expense Tracker</p>
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const logoutButton = document.getElementById('logout-button');
+            const leaderboardLink = document.getElementById('leaderboard-link');
+            const token = localStorage.getItem("access_token")
+
+            logoutButton.addEventListener('click', () => {
+               // Send a logout request to the server
+                axios.post('http://localhost:8800/user/logout',
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                }
+                )
+                .then(response => {
+                
+                    if (response.status === 200) {
+                        alert('User has been logged out.');
+                        window.location.href = '../logIn/login.html';
+                    }
+                })
+                .catch(error => console.error('Error logging out:', error));
+            });
+
+            axios.get('http://localhost:8800/user/isUserPremium',
+            {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                }
+            )
+            .then(response => {
+                const isPremiumMember = response.data.ispremium;
+                console.log(isPremiumMember)
+                // Check if the user is not a premium member and hide the Leader Board link if not
+                if (isPremiumMember !== 1) {
+                    leaderboardLink.style.display = 'none'; // Hide the Leader Board link
+                }
+            })
+            .catch(error => console.error('Error fetching ispremium:', error));
+        });
+    </script>
 </body>
 </html>

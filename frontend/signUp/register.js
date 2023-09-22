@@ -18,6 +18,9 @@ document.addEventListener("DOMContentLoaded", () => {
             if (response.status === 200) {
                 message.textContent = "User registered successfully!";
                 message.className = "success";
+                setTimeout(() => {
+                    window.location.href = "../logIn/login.html";
+                }, 2000);
             } else {
                 message.textContent = response.data.message || "Registration failed.";
                 message.className = "error";

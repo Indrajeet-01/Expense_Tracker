@@ -7,7 +7,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // function to handle delete button
     const deleteExpense = (expenseId) => {
         // Send a DELETE request to delete the expense with the given ID
-        axios.delete(`http://localhost:8800/expense/deleteExpense/${expenseId}`, {
+        axios.delete(`http://localhost:8800/expense/deleteExpense/${expenseId}`, 
+        {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',

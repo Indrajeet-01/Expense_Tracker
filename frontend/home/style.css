@@ -35,6 +35,12 @@ nav a {
     text-decoration: none;
 }
 
+.premium-icon {
+    color: gold; /* You can choose any color you prefer */
+    font-size: 18px; /* Adjust the font size as needed */
+    margin-right: 4px; /* Add some spacing to the right of the icon */
+}
+
 section {
     background-color: #fff;
     padding: 2rem;

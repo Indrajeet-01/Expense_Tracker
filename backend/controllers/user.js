@@ -57,6 +57,7 @@ export const login = (req,res) => {
             id: data[0].id,
             name: data[0].name,
             email: data[0].email,
+            ispremium: data[0].ispremium,
             access_token: token,
         };
 
@@ -65,6 +66,73 @@ export const login = (req,res) => {
         }).status(200).json(responseData)
         
     })
+}
+
+// get leader board by premium member
+export const getLeaderboard = (req, res) => {
+    const userId = req.user.id;
+
+    // SQL query to check if the user is a premium member
+    const premiumCheckQuery = 'SELECT ispremium FROM users WHERE id = ?';
+
+    db.query(premiumCheckQuery, [userId], (premiumCheckErr, premiumCheckResults) => {
+        if (premiumCheckErr) {
+            return res.status(500).json({ error: 'Failed to check premium status.' });
+        }
+        const isPremiumMember = premiumCheckResults[0].ispremium === 1;
+
+        if (!isPremiumMember) {
+            return res.status(403).json({ error: 'Access denied. You must be a premium member to view the leaderboard.' });
+        }
+
+        // SQL query to fetch users ordered by total_expense in descending order
+        const query = 'SELECT id, name, total_expense FROM users ORDER BY total_expense DESC';
+
+        db.query(query, (err, results) => {
+            if (err) {
+                return res.status(500).json({ error: 'Failed to fetch leaderboard data.' });
+            }
+
+            const leaderboard = results.map((user) => ({
+                id: user.id,
+                name: user.name,
+                total_expense: user.total_expense,
+            }));
+
+            res.status(200).json(leaderboard);
+        });
+    });
+};
+
+// check if user is premium or not
+export const isUserPremium = (req,res) => {
+    const userId = req.user.id;
+
+    const query = 'SELECT ispremium FROM users WHERE id = ?';
+
+    db.query(query, [userId], (err, results) => {
+        if (err) {
+            return res.status(500).json({ error: 'Failed to fetch user premium status.' });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ error: 'User not found.' });
+        }
+
+        const ispremium = results[0].ispremium;
+
+        // Return the ispremium value in the response
+        res.status(200).json({ ispremium });
+    });
+}
+
+// logout user
+export const logout = (req,res)=>{
+    
+    res.clearCookie("access_token",{
+        sameSite:"none",
+        secure:true
+    }).status(200).json("user has been logged out.")
 }
 
 // reset password
@@ -117,7 +185,7 @@ export const sendResetPasswordCode = async (req, res) => {
     }
 };
 
-  // Helper function to generate a reset code (you can use a library for this)
+// Helper function to generate a reset code (you can use a library for this)
 function generateCode(length) {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let code = '';
@@ -134,7 +202,6 @@ function generateCode(length) {
 export const updatePassword = (req, res) => {
     const { email, code, newPassword } = req.body;
 
-    // Check if the provided email and reset code match an entry in the reset_codes table
     const selectQuery = 'SELECT u.id, u.name, u.email, c.code FROM users u JOIN reset_codes c ON u.id = c.user_id WHERE u.email = ? AND c.code = ?';
     db.query(selectQuery, [email, code], (err, codeData) => {
         if (err) {
