@@ -2,8 +2,8 @@ import Razorpay from 'razorpay'
 import { db } from "../db.js";
 
 const razorpay = new Razorpay({
-    key_id: "rzp_test_i99EOMZqK9w3qF",
-    key_secret: "2eh2MnYfbBqOsUrA9Y3VClXk",
+    key_id: "rzp_test_cOcvN74h49UrEL",
+    key_secret: "TwxuYbdx39ukQOeqUPOTzDlX",
 })
 
 // create order payment
