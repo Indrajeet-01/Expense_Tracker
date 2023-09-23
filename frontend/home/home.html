@@ -87,7 +87,7 @@
                 // Check if the user is not a premium member and hide the Leader Board link if not
                 if (isPremiumMember !== 1) {
                     leaderboardLink.style.display = 'none'; 
-                    expenseReport.style.display = 'none'
+                    expenseReportButton.style.display = 'none'
                 }
             })
             .catch(error => console.error('Error fetching ispremium:', error));
