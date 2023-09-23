@@ -73,3 +73,17 @@ nav ul li:last-child a i {
 #addExpense a{
     text-decoration: none;
 }
+
+
+#leaderboard-link a {
+    padding: 2px;
+    background-color: gold;
+    color: rgb(54, 8, 83);
+    /* Add more styles as needed */
+}
+
+#expense-report {
+    padding: 2px;
+    background-color: gold;
+    color: rgb(54, 8, 83);
+}

@@ -3,6 +3,7 @@ import { db } from './db.js'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
+import helmet from 'helmet'
 import userRoutes from './routes/user.js'
 import expenseRoutes from './routes/expense.js'
 import razorPayment from './routes/razorpay.js'
@@ -13,6 +14,18 @@ app.use(cors())
 app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json())
 app.use(cookieParser())
+
+app.use(
+    helmet({
+        contentSecurityPolicy: {
+            directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", 'trusted-cdn.com'],
+        },
+    },
+    
+    })
+);
 
 
 app.use('/user',userRoutes)

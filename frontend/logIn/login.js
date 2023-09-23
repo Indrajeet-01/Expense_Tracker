@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 message.className = "success";
                 setTimeout(() => {
                     window.location.href = "../home/home.html";
-                }, 2000);
+                }, 1000);
                 // Redirect to a different page or perform further actions here
             } else {
                 message.textContent = response.data || "Login failed.";

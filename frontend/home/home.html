@@ -34,12 +34,6 @@
 
     </section>
 
-    <section id="income">
-        <h2>Income</h2>
-        <p>50000</p>
-    </section>
-
-    
 
     <footer>
         <p>&copy; 2023 Expense Tracker</p>
@@ -51,6 +45,9 @@
             const logoutButton = document.getElementById('logout-button');
             const leaderboardLink = document.getElementById('leaderboard-link');
             const expenseReportButton = document.getElementById('expense-report')
+
+            leaderboardLink.style.backgroundColor = "gold"
+            leaderboardLink.style.color = "black"
             const token = localStorage.getItem("access_token")
 
             logoutButton.addEventListener('click', () => {

@@ -239,7 +239,6 @@ export const sendResetPasswordCode = async (req, res) => {
             // Generate a new reset code
             const code = generateCode(5);
 
-            // Save the reset code in the database
             const insertQuery = 'INSERT INTO reset_codes (code, user_id) VALUES (?, ?)';
             db.query(insertQuery, [code, user.id], async (insertErr) => {
                 if (insertErr) {
@@ -290,7 +289,6 @@ export const updatePassword = (req, res) => {
 
         const resetCode = codeData[0];
 
-        // Check if the reset code has expired (you may need to adjust the comparison logic)
         const currentTime = new Date();
         const codeExpirationTime = new Date(resetCode.created_at);
         codeExpirationTime.setHours(codeExpirationTime.getHours() + 1); // Code expires in 1 hour
