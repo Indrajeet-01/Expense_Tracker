@@ -4,6 +4,9 @@ import {sendResetCodeEmail} from '../resetPassword/sendEmail.js'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
+import fs from 'fs'
+import { createObjectCsvWriter as createCsvWriter } from 'csv-writer';
+
 // register new user
 export const register = (req,res) => {
     const q = "SELECT * FROM users WHERE name = ? OR email = ? "
@@ -24,7 +27,7 @@ export const register = (req,res) => {
         const values = [req.body.name, req.body.email, hash,]
         console.log(values)
 
-        db.query(q, [values], (err,data) => {
+        db.query(q, [values], (err,data) => { 
             if(err){
                 return res.json(err)
             }
@@ -103,6 +106,78 @@ export const getLeaderboard = (req, res) => {
         });
     });
 };
+
+// report generation
+export const getReport = (req,res) => {
+    const userId = req.user.id;
+    
+    const premiumCheckQuery = 'SELECT ispremium FROM users WHERE id = ?';
+
+    db.query(premiumCheckQuery, [userId], (err, result) => {
+        if (err) {
+            return res.status(500).json({ error: 'Failed to check premium status.' });
+        }
+        const isPremiumMember = result[0].ispremium === 1;
+
+        if (!isPremiumMember) {
+            return res.status(403).json({ error: 'Access denied. You must be a premium member to generate reports.' });
+        }
+
+        // Fetch all expenses for the specific user
+        fetchUserExpenses(userId)
+            .then(expenses => {
+                if (expenses.length === 0) {
+                    return res.status(404).json({ error: 'No expenses found for the user.' });
+                }
+
+                // Generate and send the CSV report
+                generateCSVReport(res, expenses);
+            })
+            .catch(error => {
+                console.error('Error fetching expenses:', error);
+                res.status(500).json({ error: 'Failed to fetch expenses.' });
+            });
+    });
+
+    // Fetch all expenses for a specific user
+    function fetchUserExpenses(userId) {
+        return new Promise((resolve, reject) => {
+            const query = 'SELECT * FROM addexpense WHERE user_id = ?';
+            db.query(query, [userId], (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(results);
+                }
+            });
+        });
+    }
+
+    // Generate CSV report
+    function generateCSVReport(res, expenses) {
+        const csvWriter = createCsvWriter({
+            path: 'expense_report.csv',
+                header: [
+                { id: 'id', title: 'ID' },
+                { id: 'user_id', title: 'User ID' },
+                { id: 'amount_spent', title: 'Amount Spent' },
+                { id: 'expense_description', title: 'Expense Description' },
+                { id: 'expense_category', title: 'Expense Category' },
+            ],
+        });
+
+        // Write CSV data
+        csvWriter.writeRecords(expenses)
+            .then(() => {
+                res.setHeader('Content-Type', 'text/csv');
+                res.setHeader('Content-Disposition', 'attachment; filename="expense_report.csv"');
+
+                // Stream the CSV file to the response
+                const fileStream = fs.createReadStream('expense_report.csv');
+                fileStream.pipe(res);
+            });
+    }
+}
 
 // check if user is premium or not
 export const isUserPremium = (req,res) => {
