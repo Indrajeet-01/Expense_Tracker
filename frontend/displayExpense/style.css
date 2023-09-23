@@ -43,3 +43,46 @@ table td {
 table tbody tr:nth-child(even) {
     background-color: #f2f2f2; /* Alternate row color */
 }
+
+
+/* Style the container for pagination elements */
+#pagination {
+    display: flex;
+    justify-content: center; /* Center the pagination horizontally */
+    align-items: center; /* Center the pagination vertically */
+    margin-top: 20px; /* Add some space between the content and pagination */
+}
+
+/* Style the "Previous" and "Next" buttons */
+#prevPage, #nextPage {
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 0 10px; /* Add space between buttons */
+}
+
+/* Style the current page number */
+#currentPage {
+    font-size: 16px;
+    margin: 0 10px; /* Add space between page number and buttons */
+}
+
+/* Hover effect for buttons */
+#prevPage:hover, #nextPage:hover {
+    background-color: #0056b3;
+}
+
+/* Disable the "Previous" button when on the first page */
+#prevPage:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Disable the "Next" button when on the last page */
+#nextPage:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
