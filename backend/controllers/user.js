@@ -1,5 +1,5 @@
 import { db } from "../db.js";
-import {sendResetCodeEmail} from '../resetPassword/sendEmail.js'
+import { sendResetCodeEmail } from "../middleware/sendEmail.js";
 
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
@@ -259,7 +259,7 @@ export const sendResetPasswordCode = async (req, res) => {
     }
 };
 
-// Helper function to generate a reset code (you can use a library for this)
+// Helper function to generate a reset code 
 function generateCode(length) {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let code = '';
