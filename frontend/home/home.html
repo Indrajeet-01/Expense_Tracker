@@ -79,10 +79,10 @@
                 }
             )
             .then(response => {
-                const isPremiumMember = response.data.ispremium;
+                const isPremiumMember = response.data.isPremium;
                 console.log(isPremiumMember)
                 // Check if the user is not a premium member and hide the Leader Board link if not
-                if (isPremiumMember !== 1) {
+                if (isPremiumMember !== true) {
                     leaderboardLink.style.display = 'none'; 
                     expenseReportButton.style.display = 'none'
                 }
