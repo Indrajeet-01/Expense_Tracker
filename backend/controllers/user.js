@@ -1,4 +1,4 @@
-import { db } from "../db.js";
+
 import { sendResetCodeEmail } from "../middleware/sendEmail.js";
 
 import bcrypt from 'bcryptjs'
@@ -7,199 +7,190 @@ import jwt from 'jsonwebtoken'
 import fs from 'fs'
 import { createObjectCsvWriter as createCsvWriter } from 'csv-writer';
 
+import User from '../models/user.js'
+import AddExpense from "../models/expense.js";
+import ResetCode from "../models/resetCode.js";
+
 // register new user
-export const register = (req,res) => {
-    const q = "SELECT * FROM users WHERE name = ? OR email = ? "
-
-    db.query(q, [req.body.name, req.body.email], (err,data) => {
-        if(err){
-            return res.json(err)
+export const register = (req, res) => {
+    // Check if a user with the given email already exists
+    User.findOne({ $or: [{ name: req.body.name }, { email: req.body.email }] })
+      .then(existingUser => {
+        if (existingUser) {
+          return res.status(409).json("User already exists!");
         }
-        if(data.length){
-            return res.status(409).json("user already exist!")
-        }
-
-        // hash the password
-        const salt = bcrypt.genSaltSync(10)
-        const hash = bcrypt.hashSync(req.body.password, salt)
-
-        const q = "INSERT INTO users(name,email,password) VALUES (?)"
-        const values = [req.body.name, req.body.email, hash,]
-        console.log(values)
-
-        db.query(q, [values], (err,data) => { 
-            if(err){
-                return res.json(err)
-            }
-            return res.status(200).json("user registered successfully")
-        })
-    }) 
-}
-
+  
+        // Hash the password
+        const salt = bcrypt.genSaltSync(10);
+        const hash = bcrypt.hashSync(req.body.password, salt);
+  
+        // Create a new user document
+        const newUser = new User({
+          name: req.body.name,
+          email: req.body.email,
+          password: hash,
+          is_premium: req.body.is_premium || false, // Set is_premium if provided, default to false
+          total_expense: req.body.total_expense || 0, // Set total_expense if provided, default to 0
+        });
+  
+        // Save the new user to the database
+        newUser.save()
+          .then(() => {
+            return res.status(200).json("User registered successfully");
+          })
+          .catch(error => {
+            return res.status(500).json(error.message);
+          });
+      })
+      .catch(err => {
+        return res.status(500).json(err.message);
+      });
+  };
 // login user
-export const login = (req,res) => {
-    const q = "SELECT * FROM users WHERE name = ?"
-
-    db.query(q, [req.body.name], (err, data) => {
-        if(err){
-            return res.json(err)
+export const login = (req, res) => {
+    // Find the user by name (assuming name is unique)
+    User.findOne({ name: req.body.name })
+      .then(user => {
+        if (!user) {
+          return res.status(404).json("User not found");
         }
-        if(data.length == 0){
-            res.status(404).json("User not found")
+  
+        // Check if the provided password matches the hashed password in the database
+        const isPasswordCorrect = bcrypt.compareSync(req.body.password, user.password);
+  
+        if (!isPasswordCorrect) {
+          return res.status(400).json("Wrong username or password");
         }
-
-        // check password
-        const isPasswordCorrect = bcrypt.compareSync(req.body.password, data[0].password)
-
-        if(!isPasswordCorrect) {
-            return res.status(400).json("wrong username or password")
-        }
-        const token = jwt.sign({id:data[0].id}, "jwtkey")
+  
+        // Generate a JSON Web Token (JWT) for user authentication
+        const token = jwt.sign({ id: user._id }, "jwtkey");
+  
         const responseData = {
-            
-            id: data[0].id,
-            name: data[0].name,
-            email: data[0].email,
-            ispremium: data[0].ispremium,
-            access_token: token,
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          is_premium: user.is_premium,
+          access_token: token,
         };
-
+  
+        // Set the access_token as an HTTP-only cookie for secure storage
         res.cookie("access_token", token, {
-            httpOnly:true,
-        }).status(200).json(responseData)
-        
-    })
-}
+          httpOnly: true,
+        }).status(200).json(responseData);
+      })
+      .catch(err => {
+        return res.status(500).json(err.message);
+      });
+  };
 
 // get leader board by premium member
-export const getLeaderboard = (req, res) => {
+export const getLeaderboard = async (req, res) => {
     const userId = req.user.id;
+  
+    try {
+      // Find the user by their _id and project the 'is_premium' field
+      const user = await User.findById(userId, 'is_premium');
+  
+      if (!user) {
+        return res.status(404).json({ error: 'User not found.' });
+      }
+  
+      const isPremiumMember = user.is_premium;
+  
+      if (!isPremiumMember) {
+        return res.status(403).json({ error: 'Access denied. You must be a premium member to view the leaderboard.' });
+      }
+  
+      // Fetch users ordered by total_expense in descending order
+      const leaderboard = await User.find({}, 'name total_expense')
+        .sort({ total_expense: -1 });
+  
+      res.status(200).json(leaderboard);
+    } catch (error) {
+      console.error('Error fetching leaderboard data:', error);
+      res.status(500).json({ error: 'Failed to fetch leaderboard data.' });
+    }
+  };
 
-    // SQL query to check if the user is a premium member
-    const premiumCheckQuery = 'SELECT ispremium FROM users WHERE id = ?';
-
-    db.query(premiumCheckQuery, [userId], (premiumCheckErr, premiumCheckResults) => {
-        if (premiumCheckErr) {
-            return res.status(500).json({ error: 'Failed to check premium status.' });
-        }
-        const isPremiumMember = premiumCheckResults[0].ispremium === 1;
-
-        if (!isPremiumMember) {
-            return res.status(403).json({ error: 'Access denied. You must be a premium member to view the leaderboard.' });
-        }
-
-        // SQL query to fetch users ordered by total_expense in descending order
-        const query = 'SELECT id, name, total_expense FROM users ORDER BY total_expense DESC';
-
-        db.query(query, (err, results) => {
-            if (err) {
-                return res.status(500).json({ error: 'Failed to fetch leaderboard data.' });
-            }
-
-            const leaderboard = results.map((user) => ({
-                id: user.id,
-                name: user.name,
-                total_expense: user.total_expense,
-            }));
-
-            res.status(200).json(leaderboard);
-        });
-    });
-};
 
 // report generation
-export const getReport = (req,res) => {
+export const getReport = async (req, res) => {
     const userId = req.user.id;
-    
-    const premiumCheckQuery = 'SELECT ispremium FROM users WHERE id = ?';
-
-    db.query(premiumCheckQuery, [userId], (err, result) => {
-        if (err) {
-            return res.status(500).json({ error: 'Failed to check premium status.' });
-        }
-        const isPremiumMember = result[0].ispremium === 1;
-
-        if (!isPremiumMember) {
-            return res.status(403).json({ error: 'Access denied. You must be a premium member to generate reports.' });
-        }
-
-        // Fetch all expenses for the specific user
-        fetchUserExpenses(userId)
-            .then(expenses => {
-                if (expenses.length === 0) {
-                    return res.status(404).json({ error: 'No expenses found for the user.' });
-                }
-
-                // Generate and send the CSV report
-                generateCSVReport(res, expenses);
-            })
-            .catch(error => {
-                console.error('Error fetching expenses:', error);
-                res.status(500).json({ error: 'Failed to fetch expenses.' });
-            });
+  
+    try {
+      // Find the user by their _id and project the 'is_premium' field
+      const user = await User.findById(userId, 'is_premium');
+  
+      if (!user) {
+        return res.status(404).json({ error: 'User not found.' });
+      }
+  
+      const isPremiumMember = user.is_premium;
+  
+      if (!isPremiumMember) {
+        return res.status(403).json({ error: 'Access denied. You must be a premium member to generate reports.' });
+      }
+  
+      // Fetch all expenses for the specific user
+      const expenses = await AddExpense.find({ user: userId });
+  
+      if (expenses.length === 0) {
+        return res.status(404).json({ error: 'No expenses found for the user.' });
+      }
+  
+      // Generate and send the CSV report
+      generateCSVReport(res, expenses);
+    } catch (error) {
+      console.error('Error fetching user premium status or expenses:', error);
+      res.status(500).json({ error: 'Failed to fetch user premium status or expenses.' });
+    }
+  };
+  
+  // Generate CSV report
+  function generateCSVReport(res, expenses) {
+    const csvWriter = createCsvWriter({
+      path: 'expense_report.csv',
+      header: [
+        
+        { id: 'amount_spent', title: 'Amount Spent' },
+        { id: 'expense_description', title: 'Expense Description' },
+        { id: 'expense_category', title: 'Expense Category' },
+      ],
     });
-
-    // Fetch all expenses for a specific user
-    function fetchUserExpenses(userId) {
-        return new Promise((resolve, reject) => {
-            const query = 'SELECT * FROM addexpense WHERE user_id = ?';
-            db.query(query, [userId], (err, results) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(results);
-                }
-            });
-        });
-    }
-
-    // Generate CSV report
-    function generateCSVReport(res, expenses) {
-        const csvWriter = createCsvWriter({
-            path: 'expense_report.csv',
-                header: [
-                { id: 'id', title: 'ID' },
-                { id: 'user_id', title: 'User ID' },
-                { id: 'amount_spent', title: 'Amount Spent' },
-                { id: 'expense_description', title: 'Expense Description' },
-                { id: 'expense_category', title: 'Expense Category' },
-            ],
-        });
-
-        // Write CSV data
-        csvWriter.writeRecords(expenses)
-            .then(() => {
-                res.setHeader('Content-Type', 'text/csv');
-                res.setHeader('Content-Disposition', 'attachment; filename="expense_report.csv"');
-
-                // Stream the CSV file to the response
-                const fileStream = fs.createReadStream('expense_report.csv');
-                fileStream.pipe(res);
-            });
-    }
-}
+  
+    // Write CSV data
+    csvWriter.writeRecords(expenses)
+      .then(() => {
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Disposition', 'attachment; filename="expense_report.csv"');
+  
+        // Stream the CSV file to the response
+        const fileStream = fs.createReadStream('expense_report.csv');
+        fileStream.pipe(res);
+      });
+  }
 
 // check if user is premium or not
-export const isUserPremium = (req,res) => {
+export const isUserPremium = async (req, res) => {
     const userId = req.user.id;
-
-    const query = 'SELECT ispremium FROM users WHERE id = ?';
-
-    db.query(query, [userId], (err, results) => {
-        if (err) {
-            return res.status(500).json({ error: 'Failed to fetch user premium status.' });
-        }
-
-        if (results.length === 0) {
-            return res.status(404).json({ error: 'User not found.' });
-        }
-
-        const ispremium = results[0].ispremium;
-
-        // Return the ispremium value in the response
-        res.status(200).json({ ispremium });
-    });
-}
+  
+    try {
+      // Find the user by their _id and project only the 'is_premium' field
+      const user = await User.findById(userId, 'is_premium');
+  
+      if (!user) {
+        return res.status(404).json({ error: 'User not found.' });
+      }
+  
+      const isPremium = user.is_premium;
+  
+      // Return the isPremium value in the response
+      res.status(200).json({ isPremium });
+    } catch (error) {
+      console.error('Error fetching user premium status:', error);
+      res.status(500).json({ error: 'Failed to fetch user premium status.' });
+    }
+  };
 
 // logout user
 export const logout = (req,res)=>{
@@ -213,110 +204,87 @@ export const logout = (req,res)=>{
 // reset password
 export const sendResetPasswordCode = async (req, res) => {
     try {
-        const { email } = req.body;
-
-        // Check if the user exists in the database
-        const selectQuery = 'SELECT * FROM users WHERE email = ?';
-        db.query(selectQuery, [email], async (err, userData) => {
-        if (err) {
-            return res.status(500).json({ message: 'Database error' });
-        }
-
-        // If no user found with the provided email
-        if (userData.length === 0) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        const user = userData[0];
-        
-        // Remove any existing reset code for this user
-        const deleteQuery = 'DELETE FROM reset_codes WHERE user_id = ?';
-        db.query(deleteQuery, [user.id], async (deleteErr) => {
-            if (deleteErr) {
-            return res.status(500).json({ message: 'Database error' });
-            }
-
-            // Generate a new reset code
-            const code = generateCode(5);
-
-            const insertQuery = 'INSERT INTO reset_codes (code, user_id) VALUES (?, ?)';
-            db.query(insertQuery, [code, user.id], async (insertErr) => {
-                if (insertErr) {
-                    return res.status(500).json({ message: 'Database error' });
-                }
-
-                // Send the reset code via email
-                sendResetCodeEmail(user.email, user.name, code);
-
-                return res.status(200).json({
-                    message: 'Email reset code has been sent to your email',
-                });
-            });
-        });
-    });
+      const { email } = req.body;
+  
+      // Check if the user exists in the database
+      const user = await User.findOne({ email });
+  
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      // Remove any existing reset code for this user
+      await ResetCode.deleteMany({ user_id: user._id });
+  
+      // Generate a new reset code
+      const code = generateCode(5);
+  
+      // Create a new reset code document
+      const resetCode = new ResetCode({
+        code,
+        user_id: user._id,
+      });
+  
+      await resetCode.save();
+  
+      // Send the reset code via email
+      sendResetCodeEmail(user.email, user.name, code);
+  
+      return res.status(200).json({
+        message: 'Email reset code has been sent to your email',
+      });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+      res.status(500).json({ message: error.message });
     }
-};
-
-// Helper function to generate a reset code 
-function generateCode(length) {
+  };
+  
+  // Helper function to generate a reset code
+  function generateCode(length) {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let code = '';
-
+  
     for (let i = 0; i < length; i++) {
-        const randomIndex = Math.floor(Math.random() * characters.length);
-        code += characters.charAt(randomIndex);
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      code += characters.charAt(randomIndex);
     }
-
+  
     return code;
-}
-
-// update password
-export const updatePassword = (req, res) => {
+  }
+  
+  // update password
+  export const updatePassword = async (req, res) => {
     const { email, code, newPassword } = req.body;
-
-    const selectQuery = 'SELECT u.id, u.name, u.email, c.code FROM users u JOIN reset_codes c ON u.id = c.user_id WHERE u.email = ? AND c.code = ?';
-    db.query(selectQuery, [email, code], (err, codeData) => {
-        if (err) {
-            return res.status(500).json({ message: 'Database error' });
-        }
-
-      // If no matching reset code found
-        if (codeData.length === 0) {
-            return res.status(404).json({ message: 'Invalid reset code' });
-        }
-
-        const resetCode = codeData[0];
-
-        const currentTime = new Date();
-        const codeExpirationTime = new Date(resetCode.created_at);
-        codeExpirationTime.setHours(codeExpirationTime.getHours() + 1); // Code expires in 1 hour
-
-        if (currentTime > codeExpirationTime) {
-            return res.status(400).json({ message: 'Reset code has expired' });
-        }
-
-        // Hash the new password
-        const salt = bcrypt.genSaltSync(10);
-        const hash = bcrypt.hashSync(newPassword, salt);
-
-       // Update the user's password in the users table
-        const updatePasswordQuery = 'UPDATE users SET password = ? WHERE email = ?';
-        db.query(updatePasswordQuery, [hash, email], (updateErr) => {
-            if (updateErr) {
-                return res.status(500).json({ message: 'Database error' });
-            }
-
-           // Delete the used reset code from the reset_codes table
-            const deleteCodeQuery = 'DELETE FROM reset_codes WHERE id = ?';
-            db.query(deleteCodeQuery, [resetCode.id], (deleteErr) => {
-                if (deleteErr) {
-                    return res.status(500).json({ message: 'Database error' });
-                }
-
-                return res.status(200).json({ message: 'Password updated successfully' });
-            });
-        });
-    });
-};
+  
+    try {
+      // Find the user and reset code
+      const user = await User.findOne({ email });
+      const resetCode = await ResetCode.findOne({ user_id: user._id, code });
+  
+      if (!user || !resetCode) {
+        return res.status(404).json({ message: 'Invalid reset code' });
+      }
+  
+      // Check if the reset code has expired (1 hour duration)
+      const currentTime = new Date();
+      const codeExpirationTime = new Date(resetCode.created_at);
+      codeExpirationTime.setHours(codeExpirationTime.getHours() + 1);
+  
+      if (currentTime > codeExpirationTime) {
+        return res.status(400).json({ message: 'Reset code has expired' });
+      }
+  
+      // Hash the new password
+      const salt = bcrypt.genSaltSync(10);
+      const hash = bcrypt.hashSync(newPassword, salt);
+  
+      // Update the user's password in the users collection
+      await User.updateOne({ email }, { password: hash });
+  
+      // Delete the used reset code document
+      await ResetCode.findByIdAndDelete(resetCode._id);
+  
+      return res.status(200).json({ message: 'Password updated successfully' });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  }; 

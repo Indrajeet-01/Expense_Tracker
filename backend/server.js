@@ -1,5 +1,5 @@
 import express from 'express'
-import { db } from './db.js'
+
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
@@ -7,6 +7,10 @@ import helmet from 'helmet'
 import userRoutes from './routes/user.js'
 import expenseRoutes from './routes/expense.js'
 import razorPayment from './routes/razorpay.js'
+import mongoose from 'mongoose'
+import dotenv from 'dotenv' 
+
+dotenv.config()
 
 const app = express()
 
@@ -32,14 +36,19 @@ app.use('/user',userRoutes)
 app.use('/expense',expenseRoutes)
 app.use('/payment',razorPayment)
 
-
-db.connect((err) => {
-    if (err) {
-        console.error('Error connecting to the database')
-        return;
-    }
-    console.log('Connected to the database' )
+// database
+mongoose.connect(process.env.MONGO_URL, {
+    useNewUrlParser: true,
+   // useUnifiedTopology: true,
+    
 })
+.then(()=>console.log("DB Connection Successfully"))
+.catch((err)=>{
+    console.log(err)
+})
+
+
+
 
 app.listen(8800, ()=>{
     console.log("server is running!")
