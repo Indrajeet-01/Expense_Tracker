@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    unique: true, // Ensures email addresses are unique
+    unique: true, 
   },
   password: {
     type: String,
@@ -18,15 +18,15 @@ const userSchema = new mongoose.Schema({
   },
   is_premium: {
     type: Boolean,
-    default: false, // Default value for is_premium is false
+    default: false, 
   },
   total_expense: {
     type: Number,
-    default: 0, // Default value for total_expense is 0
+    default: 0, 
   },
 });
 
-// Create a User model using the schema
+
 const User = mongoose.model('User', userSchema);
 
 export default User
