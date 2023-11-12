@@ -14,10 +14,9 @@ export const addExpense = async (req, res) => {
             user: userId, 
             amount_spent: amountSpent,
             expense_description: expenseDescription,
-            expense_category: expenseCategory,
+            expense_category: expenseCategory, 
         });
 
-      // Save the new expense document
         await newExpense.save();
 
       // Update the user's total_expense field

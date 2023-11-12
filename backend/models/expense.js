@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const addExpenseSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', // This references the User model
+        ref: 'User', 
     },
     amount_spent: {
         type: Number,
