@@ -2,7 +2,7 @@
 import '../styles/auth.css'
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { registerUser, loginUser, clearMessage } from '../contexts/actions/user';
+import { registerUser, loginUser, } from '../contexts/actions/user';
 
 const Auth = () => {
   const dispatch = useDispatch();
@@ -31,9 +31,7 @@ const Auth = () => {
     dispatch(loginUser(formData));
   };
 
-  const handleClearMessage = () => {
-    dispatch(clearMessage());
-  };
+  
 
   const toggleForm = () => {
     setIsNewUser(!isNewUser);
@@ -81,11 +79,7 @@ const Auth = () => {
         {isNewUser ? "Already have an account? Login" : "Don't have an account? Sign Up"}
       </button>
 
-      {message && (
-        <div className={messageType} onClick={handleClearMessage}>
-          {message}
-        </div>
-      )}
+      
     </div>
   );
 };

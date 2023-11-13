@@ -1,0 +1,66 @@
+/* Reset some default styles for consistency */
+body, h1, h2, h3, p, ul, li {
+    margin: 0;
+    padding: 0;
+  }
+  
+  header {
+    background-color: #3498db; /* Header background color */
+    height: 50px;
+    width: 900px;
+    color: #fff; /* Text color */
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  header a {
+    text-decoration: none;
+    color: #fff;
+  }
+  
+  /* Home Link */
+  header > div:nth-child(1) a {
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+  
+  /* Navigation Links */
+  header > div:nth-child(2) ul {
+    list-style-type: none;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  
+  header > div:nth-child(2) li {
+    margin-right: 20px;
+  }
+  
+  /* Premium Icon and Logout Button */
+  header > div:nth-child(3) {
+    display: flex;
+    align-items: center;
+  }
+  
+  #premium-icon {
+    margin-right: 20px;
+    color: gold; /* Color for the premium icon */
+  }
+  
+  #logout-button {
+    background-color: #e74c3c; /* Color for the logout button */
+    color: #fff;
+    padding: 8px 15px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  /* Hover effect for the logout button */
+  #logout-button:hover {
+    background-color: #c0392b;
+  }
+  

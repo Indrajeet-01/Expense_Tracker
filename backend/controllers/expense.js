@@ -3,7 +3,7 @@
 import User from '../models/user.js'
 import AddExpense from "../models/expense.js";
 
-
+ 
 // add new expense 
 export const addExpense = async (req, res) => {
     const userId = req.user.id;

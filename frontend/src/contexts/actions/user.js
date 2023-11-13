@@ -8,7 +8,9 @@ import {
   LOGIN_FAIL,
   SET_MESSAGE,
   CLEAR_MESSAGE,
-  SET_TOKEN
+  SET_TOKEN,
+  LOGOUT,
+  SET_IS_PREMIUM,
 } from '../constants/user'
 
 export const registerUser = (userData) => async (dispatch) => {
@@ -46,12 +48,13 @@ export const loginUser = (userData) => async (dispatch) => {
         payload: response.data.access_token,
       });
 
+    dispatch({
+      type: SET_IS_PREMIUM,
+      payload: response.data.is_premium
+    })
     localStorage.setItem("access_token", response.data.access_token);
 
-    dispatch({
-      type: SET_MESSAGE,
-      payload: "Login successful!",
-    });
+    
   } catch (error) {
     dispatch({
       type: LOGIN_FAIL,
@@ -60,6 +63,23 @@ export const loginUser = (userData) => async (dispatch) => {
   }
 };
 
-export const clearMessage = () => ({
-  type: CLEAR_MESSAGE,
-});
+export const logoutUser = (token) => async (dispatch) => {
+  try {
+    // Send a logout request to the server
+    await axios.post('http://localhost:8800/user/logout', null, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    // Dispatch the LOGOUT action
+    dispatch({
+      type: LOGOUT,
+    });
+  } catch (error) {
+    console.error('Error logging out:', error);
+  }
+};
+
+
