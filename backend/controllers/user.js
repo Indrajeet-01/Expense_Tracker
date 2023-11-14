@@ -71,6 +71,7 @@ export const login = (req, res) => {
             email: user.email,
             is_premium: user.is_premium,
             access_token: token,
+            total_expense: user.total_expense
         };
 
         // Set the access_token as an HTTP-only cookie for secure storage

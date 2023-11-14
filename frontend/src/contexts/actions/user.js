@@ -7,7 +7,7 @@ import {
   LOGIN_SUCCESS,
   LOGIN_FAIL,
   SET_MESSAGE,
-  
+  UPDATE_TOTAL_EXPENSE ,
   SET_TOKEN,
   LOGOUT,
   SET_IS_PREMIUM,
@@ -53,8 +53,9 @@ export const loginUser = (userData) => async (dispatch) => {
       type: SET_IS_PREMIUM,
       payload: response.data.is_premium
     })
-    localStorage.setItem("access_token", response.data.access_token);
+    
 
+   
     
   } catch (error) {
     dispatch({
@@ -63,6 +64,8 @@ export const loginUser = (userData) => async (dispatch) => {
     });
   }
 };
+
+
 
 export const logoutUser = (token) => async (dispatch) => {
   try {

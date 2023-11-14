@@ -4,6 +4,7 @@ import { ADD_EXPENSE,DELETE_EXPENSE, DISPLAY_EXPENSES } from '../constants/expen
 
 const initialState = {
   expenses: [],
+  
 };
 
 const expensesReducer = (state = initialState, action) => {
@@ -14,6 +15,7 @@ const expensesReducer = (state = initialState, action) => {
         expenses: [...state.expenses, action.payload],
       };
 
+      
       case DISPLAY_EXPENSES:
         return {
           ...state,

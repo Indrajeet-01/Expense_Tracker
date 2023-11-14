@@ -1,7 +1,8 @@
 // redux/actions.js
 
 import axios from 'axios';
-import { ADD_EXPENSE , DISPLAY_EXPENSES,DELETE_EXPENSE} from '../constants/expense';
+import { ADD_EXPENSE, DISPLAY_EXPENSES,DELETE_EXPENSE} from '../constants/expense';
+
 
 export const addExpense = (expenseData, token) => {
   return async (dispatch) => {
@@ -23,6 +24,8 @@ export const addExpense = (expenseData, token) => {
         payload: response.data,
       });
 
+     
+      
       // Optionally, you can handle the success message and redirection in the component
       console.log(response.data);
       alert('Expense added successfully');

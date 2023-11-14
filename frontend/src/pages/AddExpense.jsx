@@ -9,7 +9,7 @@ const AddExpense = () => {
   const dispatch = useDispatch();
   const token = useSelector(state => state.user.token);
 
-  const [amountSpent, setAmountSpent] = useState('');
+  const [amountSpent, setAmountSpent] = useState(0);
   const [expenseDescription, setExpenseDescription] = useState('');
   const [expenseCategory, setExpenseCategory] = useState('food'); // Default category
 
@@ -24,7 +24,7 @@ const AddExpense = () => {
 
     dispatch(addExpense(expenseData, token));
 
-    setAmountSpent('');
+    setAmountSpent(0);
     setExpenseDescription('');
     setExpenseCategory('food'); // Reset category to the default value
   };

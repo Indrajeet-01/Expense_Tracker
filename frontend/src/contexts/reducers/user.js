@@ -5,7 +5,7 @@ import {
     REGISTER_FAIL,
     LOGIN_SUCCESS,
     LOGIN_FAIL,
-    
+    UPDATE_TOTAL_EXPENSE,
     SET_TOKEN,
     LOGOUT,
     SET_IS_PREMIUM,
@@ -17,7 +17,7 @@ import {
     messageType: '',
     token: null,
     is_premium: false,
-    
+    totalExpense: 0,
   };
   
   const userReducer = (state = initialState, action) => {
@@ -59,6 +59,8 @@ import {
             ...state,
             is_premium: action.payload,
           };
+
+         
 
 
       default:
