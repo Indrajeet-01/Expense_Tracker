@@ -1,8 +1,7 @@
-// redux/actions.js
+
 
 import axios from 'axios';
 import { ADD_EXPENSE, DISPLAY_EXPENSES,DELETE_EXPENSE} from '../constants/expense';
-
 
 export const addExpense = (expenseData, token) => {
   return async (dispatch) => {
@@ -24,15 +23,11 @@ export const addExpense = (expenseData, token) => {
         payload: response.data,
       });
 
-     
-      
-      // Optionally, you can handle the success message and redirection in the component
       console.log(response.data);
       alert('Expense added successfully');
-      // You can redirect the user to another page if needed
       
     } catch (error) {
-      // Handle errors and dispatch any error-related actions if needed
+      
       console.error('Error:', error);
       alert('An error occurred while adding the expense');
     }
@@ -54,7 +49,7 @@ export const displayExpenses = (token) => async (dispatch) => {
     });
   } catch (error) {
     console.error('Error fetching expenses:', error);
-    // Handle error actions if needed
+    
   }
 };
 
@@ -73,6 +68,6 @@ export const deleteExpense = (expenseId, token) => async (dispatch) => {
     });
   } catch (error) {
     console.error('Error deleting expense:', error);
-    // Handle error actions if needed
+    
   }
 };

@@ -1,4 +1,4 @@
-// redux/reducers/expenses.js
+
 
 import { ADD_EXPENSE,DELETE_EXPENSE, DISPLAY_EXPENSES } from '../constants/expense';
 
@@ -26,7 +26,7 @@ const expensesReducer = (state = initialState, action) => {
           ...state,
           expenses: state.expenses.filter((expense) => expense._id !== action.payload),
         };
-    // Add other cases if needed
+    
     default:
       return state;
   }

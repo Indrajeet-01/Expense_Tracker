@@ -1,11 +1,11 @@
-// redux/reducers/userReducer.js
+
 
 import {
     REGISTER_SUCCESS,
     REGISTER_FAIL,
     LOGIN_SUCCESS,
     LOGIN_FAIL,
-    UPDATE_TOTAL_EXPENSE,
+    
     SET_TOKEN,
     LOGOUT,
     SET_IS_PREMIUM,
@@ -22,8 +22,8 @@ import {
   
   const userReducer = (state = initialState, action) => {
 
-    console.log('Action:', action.type);
-  console.log('Current State:', state);
+  //   console.log('Action:', action.type);
+  // console.log('Current State:', state);
 
     switch (action.type) {
       case REGISTER_SUCCESS:
@@ -42,7 +42,7 @@ import {
           messageType: 'error',
         };
       
-        case SET_TOKEN: // Handle setting the token in the state
+        case SET_TOKEN: 
         return {
           ...state,
           token: action.payload,
@@ -59,9 +59,6 @@ import {
             ...state,
             is_premium: action.payload,
           };
-
-         
-
 
       default:
         return state;

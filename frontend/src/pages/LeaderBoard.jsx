@@ -1,4 +1,4 @@
-// leaderBoard.js
+
 import React, { useEffect, useState } from 'react';
 import {useSelector} from 'react-redux'
 import axios from 'axios';
@@ -30,7 +30,7 @@ const Leaderboard = () => {
     };
 
     fetchData();
-  }, []);
+  }, [token]);
 
   return (
     <div>
@@ -47,7 +47,7 @@ const Leaderboard = () => {
         </thead>
         <tbody>
           {leaderboardData.map((user, index) => (
-            <tr key={user.id}>
+            <tr key={user._id}>
               <td>{index + 1}</td>
               <td>{user.name}</td>
               <td>{user.total_expense}</td>

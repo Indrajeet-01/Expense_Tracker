@@ -1,9 +1,8 @@
-// ExpenseForm.js
 
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addExpense } from '../contexts/actions/expense';
-import '../styles/addExpense.css'; // Import the CSS file
+import '../styles/addExpense.css'; 
 
 const AddExpense = () => {
   const dispatch = useDispatch();
@@ -11,7 +10,7 @@ const AddExpense = () => {
 
   const [amountSpent, setAmountSpent] = useState(0);
   const [expenseDescription, setExpenseDescription] = useState('');
-  const [expenseCategory, setExpenseCategory] = useState('food'); // Default category
+  const [expenseCategory, setExpenseCategory] = useState('food'); 
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
@@ -26,7 +25,7 @@ const AddExpense = () => {
 
     setAmountSpent(0);
     setExpenseDescription('');
-    setExpenseCategory('food'); // Reset category to the default value
+    setExpenseCategory('food'); 
   };
 
   return (

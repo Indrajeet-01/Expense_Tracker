@@ -1,4 +1,4 @@
-// redux/actions/userActions.js
+
 
 import axios from 'axios';
 import {
@@ -7,7 +7,7 @@ import {
   LOGIN_SUCCESS,
   LOGIN_FAIL,
   SET_MESSAGE,
-  UPDATE_TOTAL_EXPENSE ,
+  
   SET_TOKEN,
   LOGOUT,
   SET_IS_PREMIUM,
@@ -45,7 +45,7 @@ export const loginUser = (userData) => async (dispatch) => {
     });
 
     dispatch({
-        type: SET_TOKEN, // New action type to set the token
+        type: SET_TOKEN, 
         payload: response.data.access_token,
       });
 
@@ -54,8 +54,6 @@ export const loginUser = (userData) => async (dispatch) => {
       payload: response.data.is_premium
     })
     
-
-   
     
   } catch (error) {
     dispatch({
@@ -69,7 +67,7 @@ export const loginUser = (userData) => async (dispatch) => {
 
 export const logoutUser = (token) => async (dispatch) => {
   try {
-    // Send a logout request to the server
+    
     await axios.post('http://localhost:8800/user/logout', null, {
       headers: {
         'Authorization': `Bearer ${token}`,

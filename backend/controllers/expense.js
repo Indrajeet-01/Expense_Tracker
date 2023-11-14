@@ -34,7 +34,7 @@ export const addExpense = async (req, res) => {
         res.status(500).json({ error: 'Failed to add expense.' });
     }
 };
-
+ 
 // get all expenses
 export const getExpense = async (req, res) => {
     const userId = req.user.id;
@@ -61,6 +61,16 @@ export const deleteExpense = async (req, res) => {
         if (!deletedExpense) {
             return res.status(404).json({ error: 'Expense not found or you do not have permission to delete it.' });
         }
+
+        // Update the user's total_expense field
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json("User not found");
+        }
+
+        user.total_expense -= deletedExpense.amount_spent; // subtract the deleted expense amount
+        await user.save();
+        
 
         res.status(200).json({ message: 'Expense deleted successfully.' });
     } catch (error) {

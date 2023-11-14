@@ -1,4 +1,3 @@
-// BuyPremium.js
 
 import React, { useState } from 'react';
 import axios from 'axios';
@@ -17,7 +16,7 @@ const BuyPremium = () => {
     e.preventDefault();
 
     try {
-      // Fetch order details from the server
+      
       const orderResponse = await axios.post(
         'http://localhost:8800/payment/createOrder',
         {

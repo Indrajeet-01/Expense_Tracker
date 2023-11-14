@@ -9,7 +9,7 @@ import expensesReducer from './reducers/expense';
 const rootReducer = combineReducers({
   user: userReducer,
   expenses: expensesReducer,
-  // Add other reducers if needed
+  
 });
 
 const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)));
