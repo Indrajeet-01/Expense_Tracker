@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { displayExpenses, deleteExpense } from '../contexts/actions/expense';
+// import '../styles/allExpense.css'
 
 const AllExpenses = () => {
   const dispatch = useDispatch();

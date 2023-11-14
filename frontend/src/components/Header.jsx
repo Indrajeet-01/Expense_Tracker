@@ -29,12 +29,12 @@ const Header = () => {
   return (
     <header>
       <div>
-        <Link to="/home">Home</Link>
+        <Link to="/">Home</Link>
       </div>
       <div>
       <ul>
         <div>
-          <Link to="/payment" id="premium-icon"><FaCrown className="premium-icon" style={{ color: 'gold', fontSize: '20px' }} />Buy Premium
+          <Link to="/buy-premium" id="premium-icon"><FaCrown className="premium-icon" style={{ color: 'gold', fontSize: '20px' }} />Buy Premium
 </Link>
         </div>
         <div><Link to="/all-expense">Expenses</Link></div>

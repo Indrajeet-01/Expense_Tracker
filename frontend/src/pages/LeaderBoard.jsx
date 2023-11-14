@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import {useSelector} from 'react-redux'
 import axios from 'axios';
+import '../styles/leaderBoard.css'
 
 const Leaderboard = () => {
   const [leaderboardData, setLeaderboardData] = useState([]);
