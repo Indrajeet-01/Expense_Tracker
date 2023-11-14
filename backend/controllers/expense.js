@@ -24,7 +24,7 @@ export const addExpense = async (req, res) => {
         if (!user) {
             return res.status(404).json("User not found");
         }
-
+ 
         user.total_expense += amountSpent;
         await user.save();
 

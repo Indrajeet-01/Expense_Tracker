@@ -32,12 +32,12 @@ const AllExpenses = () => {
         </thead>
         <tbody>
           {expenses.map((expense) => (
-            <tr key={expense.id}>
+            <tr key={expense._id}>
               <td>{expense.amount_spent}</td>
               <td>{expense.expense_description}</td>
               <td>{expense.expense_category}</td>
               <td>
-                <button onClick={() => deleteExpenseHandler(expense.id)}>Delete</button>
+                <button onClick={() => deleteExpenseHandler(expense._id)}>Delete</button>
               </td>
             </tr>
           ))}
