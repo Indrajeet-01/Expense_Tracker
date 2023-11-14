@@ -3,7 +3,7 @@
   header {
     background-color: #3498db; /* Header background color */
     height: 50px;
-    width: 900px;
+    width: 1100px;
     color: #fff; /* Text color */
     padding: 15px;
     display: flex;
@@ -47,7 +47,7 @@
     color: gold; /* Color for the premium icon */
   }
   
-  #logout-button {
+  .lg-button {
     background-color: #e74c3c; /* Color for the logout button */
     color: #fff;
     padding: 8px 15px;
@@ -57,7 +57,7 @@
   }
   
   /* Hover effect for the logout button */
-  #logout-button:hover {
+  .lg-button:hover {
     background-color: #c0392b;
   }
   

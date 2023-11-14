@@ -8,6 +8,8 @@ import AllExpenses from "./pages/AllExpense";
 import Header from "./components/Header";
 import Leaderboard from "./pages/LeaderBoard";
 import BuyPremium from "./pages/BuyPremium";
+import SendEmail from "./components/SendEmail";
+import UpdatePassword from "./components/UpdatePassword";
 
 
 function App() {
@@ -21,7 +23,9 @@ function App() {
           
           <Route path="/all-expense" element={<AllExpenses/>} />
           <Route path="/leader-board" element={<Leaderboard/>} />
-          {/* <Route path="/buy-premium" element={<BuyPremium/>} /> */}
+          <Route path="/buy-premium" element={<BuyPremium/>} />
+          <Route path="/send-email" element={<SendEmail/>} />
+          <Route path="/update-password" element={<UpdatePassword/>} />
         </Routes>
       </Router>
     </Provider>

@@ -44,8 +44,13 @@ const Header = () => {
     </ul>
   </div>
   <div>
+    {token  ? (
+      <button className="lg-button" onClick={handleLogout}>Logout</button>
+
+    ) : (
+      <Link className='lg-button' to='/auth'>Login</Link>
+    )}
     
-    <button id="logout-button" onClick={handleLogout}>Logout</button>
   </div>
 </header>
 

@@ -1,7 +1,7 @@
 // components/RegistrationLoginForm.js
 import '../styles/auth.css'
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {Link, useNavigate } from 'react-router-dom';
 import { useDispatch} from 'react-redux';
 import { registerUser, loginUser, } from '../contexts/actions/user';
 
@@ -77,7 +77,7 @@ const Auth = () => {
             <input type="password" name="password" value={formData.password} onChange={handleInputChange} />
           </label>
           <button type="submit">Login</button>
-          <a href="/forgot-password">Forgot Password?</a>
+          <Link className='forgot-password' to="/send-email">Forgot Password?</Link>
         </form>
       )}
 
