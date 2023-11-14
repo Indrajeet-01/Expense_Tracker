@@ -6,6 +6,8 @@ import Auth from "./pages/Auth";
 import AddExpense from "./pages/AddExpense";
 import AllExpenses from "./pages/AllExpense";
 import Header from "./components/Header";
+import Leaderboard from "./pages/LeaderBoard";
+import BuyPremium from "./pages/BuyPremium";
 
 
 function App() {
@@ -14,9 +16,12 @@ function App() {
       <Router>
         <Header/>
         <Routes>
+          <Route path="/" element={<AddExpense/>} /> 
           <Route path="/auth" element={<Auth/>} />
-          <Route path="/add-expense" element={<AddExpense/>} /> 
+          
           <Route path="/all-expense" element={<AllExpenses/>} />
+          <Route path="/leader-board" element={<Leaderboard/>} />
+          {/* <Route path="/buy-premium" element={<BuyPremium/>} /> */}
         </Routes>
       </Router>
     </Provider>

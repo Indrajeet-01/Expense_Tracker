@@ -5,11 +5,11 @@ import {
     REGISTER_FAIL,
     LOGIN_SUCCESS,
     LOGIN_FAIL,
-    SET_MESSAGE,
-    CLEAR_MESSAGE,
+    
     SET_TOKEN,
     LOGOUT,
     SET_IS_PREMIUM,
+    
   } from '../constants/user';
   
   const initialState = {
@@ -17,6 +17,7 @@ import {
     messageType: '',
     token: null,
     is_premium: false,
+    
   };
   
   const userReducer = (state = initialState, action) => {
@@ -58,6 +59,8 @@ import {
             ...state,
             is_premium: action.payload,
           };
+
+
       default:
         return state;
     }

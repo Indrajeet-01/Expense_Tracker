@@ -7,10 +7,11 @@ import {
   LOGIN_SUCCESS,
   LOGIN_FAIL,
   SET_MESSAGE,
-  CLEAR_MESSAGE,
+  
   SET_TOKEN,
   LOGOUT,
   SET_IS_PREMIUM,
+  
 } from '../constants/user'
 
 export const registerUser = (userData) => async (dispatch) => {
@@ -81,5 +82,4 @@ export const logoutUser = (token) => async (dispatch) => {
     console.error('Error logging out:', error);
   }
 };
-
 

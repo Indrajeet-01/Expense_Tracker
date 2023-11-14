@@ -1,9 +1,5 @@
 /* Reset some default styles for consistency */
-body, h1, h2, h3, p, ul, li {
-    margin: 0;
-    padding: 0;
-  }
-  
+
   header {
     background-color: #3498db; /* Header background color */
     height: 50px;
@@ -12,6 +8,7 @@ body, h1, h2, h3, p, ul, li {
     padding: 15px;
     display: flex;
     justify-content: space-between;
+    margin-top: 0;
     align-items: center;
   }
   

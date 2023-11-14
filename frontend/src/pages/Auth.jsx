@@ -1,12 +1,14 @@
 // components/RegistrationLoginForm.js
 import '../styles/auth.css'
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch} from 'react-redux';
 import { registerUser, loginUser, } from '../contexts/actions/user';
 
 const Auth = () => {
   const dispatch = useDispatch();
-  const { message, messageType } = useSelector((state) => state.user);
+  const navigate = useNavigate()
+  
 
   const [isNewUser, setIsNewUser] = useState(true);
 
@@ -24,11 +26,15 @@ const Auth = () => {
   const handleRegister = (e) => {
     e.preventDefault();
     dispatch(registerUser(formData));
+
+    navigate('/')
   };
 
   const handleLogin = (e) => {
     e.preventDefault();
     dispatch(loginUser(formData));
+
+    navigate('/')
   };
 
   

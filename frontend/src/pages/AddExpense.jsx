@@ -7,7 +7,7 @@ import '../styles/addExpense.css'; // Import the CSS file
 
 const AddExpense = () => {
   const dispatch = useDispatch();
-  const token = localStorage.getItem('access_token')
+  const token = useSelector(state => state.user.token);
 
   const [amountSpent, setAmountSpent] = useState('');
   const [expenseDescription, setExpenseDescription] = useState('');

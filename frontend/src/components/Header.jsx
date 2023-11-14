@@ -4,6 +4,8 @@ import { Link , useNavigate} from 'react-router-dom'; // Assuming you're using R
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutUser } from '../contexts/actions/user';
 import '../styles/header.css'
+import { FaCrown } from 'react-icons/fa';
+import ExpenseReport from './ExpenseReport';
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -31,16 +33,18 @@ const Header = () => {
     <header>
   <div>
     <Link to="/home">Home</Link>
+    <Link to="/payment" id="premium-icon"><FaCrown className="premium-icon" style={{ color: 'gold', fontSize: '20px' }} />
+</Link>
   </div>
   <div>
     <ul>
       <div><Link to="/all-expense">Expenses</Link></div>
-      {isPremium && <div><Link to="/leaderboard">Leader Board</Link></div>}
-        {isPremium && <div><button id="expense-report">Reports</button></div>}
+        {isPremium && <div><Link to="/leader-board">Leader Board</Link></div>}
+        {isPremium && <div><ExpenseReport token={token}/></div>}
     </ul>
   </div>
   <div>
-    <Link to="/payment" id="premium-icon"><i className="fas fa-crown"></i></Link>
+    
     <button id="logout-button" onClick={handleLogout}>Logout</button>
   </div>
 </header>
