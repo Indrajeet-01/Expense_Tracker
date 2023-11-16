@@ -37,9 +37,9 @@ const Header = () => {
           <Link to="/buy-premium" id="premium-icon"><FaCrown className="premium-icon" style={{ color: 'gold', fontSize: '20px' }} />Buy Premium
 </Link>
         </div>
-        <div><Link to="/all-expense">Expenses</Link></div>
-        {isPremium && <div><Link to="/leader-board">Leader Board</Link></div>}
-        {isPremium && <div><ExpenseReport token={token}/></div>}
+        {token && <div><Link to="/all-expense">Expenses</Link></div>}
+        {token && isPremium && <div><Link to="/leader-board">Leader Board</Link></div>}
+        {token && isPremium && <div><ExpenseReport token={token}/></div>}
       </ul>
     </div>
     <div>

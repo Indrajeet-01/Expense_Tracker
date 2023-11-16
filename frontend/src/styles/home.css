@@ -1,0 +1,20 @@
+/* Home.css */
+
+.home-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  h2 {
+    color: #333;
+  }
+  
+  .expense-section,
+  .leaderboard-section,
+  .download-section {
+    margin-bottom: 20px;
+  }
+  
+  /* Add more specific styling based on your design */
+  

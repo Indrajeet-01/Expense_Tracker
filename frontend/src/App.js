@@ -10,6 +10,7 @@ import Leaderboard from "./pages/LeaderBoard";
 import BuyPremium from "./pages/BuyPremium";
 import SendEmail from "./components/SendEmail";
 import UpdatePassword from "./components/UpdatePassword";
+import Home from "./components/Home";
 
 
 function App() {
@@ -18,7 +19,8 @@ function App() {
       <Router>
         <Header/>
         <Routes>
-          <Route path="/" element={<AddExpense/>} /> 
+          <Route path="/" element={<Home/>} />
+          <Route path="/add-expense" element={<AddExpense/>} /> 
           <Route path="/auth" element={<Auth/>} />
           
           <Route path="/all-expense" element={<AllExpenses/>} />

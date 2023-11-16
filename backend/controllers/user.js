@@ -197,7 +197,7 @@ export const logout = (req,res)=>{
         secure:true
     }).status(200).json("user has been logged out.")
 }
-
+ 
 // reset password
 export const sendResetPasswordCode = async (req, res) => {
     try {

@@ -68,7 +68,7 @@ export const loginUser = (userData) => async (dispatch) => {
 export const logoutUser = (token) => async (dispatch) => {
   try {
     
-    await axios.post('http://localhost:8800/user/logout', null, {
+    await axios.post('http://localhost:8800/user/logout', {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
